@@ -76,17 +76,17 @@ export default function AdminCustomer({ session }) {
         <div style={{ background: 'var(--slate)', border: '1px solid var(--border)', borderRadius: 10, padding: 24, marginBottom: 32 }}>
           <h2 style={{ margin: '0 0 16px', fontSize: '1rem' }}>Add Invoice</h2>
           <form onSubmit={handleAddInvoice} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
-            <input placeholder="Invoice #" value={newInvoice.invoice_number} onChange={e => setNewInvoice({ ...newInvoice, invoice_number: e.target.value })} required style={inputStyle} />
-            <input type="date" value={newInvoice.invoice_date} onChange={e => setNewInvoice({ ...newInvoice, invoice_date: e.target.value })} required style={inputStyle} />
-            <input type="date" placeholder="Due date" value={newInvoice.due_date} onChange={e => setNewInvoice({ ...newInvoice, due_date: e.target.value })} required style={inputStyle} />
-            <input type="number" placeholder="Total $" step="0.01" value={newInvoice.amount_total} onChange={e => setNewInvoice({ ...newInvoice, amount_total: e.target.value })} required style={inputStyle} />
-            <input type="number" placeholder="Paid $" step="0.01" value={newInvoice.amount_paid} onChange={e => setNewInvoice({ ...newInvoice, amount_paid: e.target.value })} style={inputStyle} />
-            <select value={newInvoice.status} onChange={e => setNewInvoice({ ...newInvoice, status: e.target.value })} style={inputStyle}>
+            <div><label style={labelStyle}>Invoice #</label><input value={newInvoice.invoice_number} onChange={e => setNewInvoice({ ...newInvoice, invoice_number: e.target.value })} required style={inputStyle} /></div>
+            <div><label style={labelStyle}>Invoice Date</label><input type="date" value={newInvoice.invoice_date} onChange={e => setNewInvoice({ ...newInvoice, invoice_date: e.target.value })} required style={inputStyle} /></div>
+            <div><label style={labelStyle}>Due Date</label><input type="date" value={newInvoice.due_date} onChange={e => setNewInvoice({ ...newInvoice, due_date: e.target.value })} required style={inputStyle} /></div>
+            <div><label style={labelStyle}>Total $</label><input type="number" step="0.01" value={newInvoice.amount_total} onChange={e => setNewInvoice({ ...newInvoice, amount_total: e.target.value })} required style={inputStyle} /></div>
+            <div><label style={labelStyle}>Paid $</label><input type="number" step="0.01" value={newInvoice.amount_paid} onChange={e => setNewInvoice({ ...newInvoice, amount_paid: e.target.value })} style={inputStyle} /></div>
+            <div><label style={labelStyle}>Status</label><select value={newInvoice.status} onChange={e => setNewInvoice({ ...newInvoice, status: e.target.value })} style={inputStyle}>
               <option value="unpaid">Unpaid</option>
               <option value="partial">Partial</option>
               <option value="paid">Paid</option>
-            </select>
-            <button type="submit" className="btn-view" style={{ padding: '10px 18px' }}>Add Invoice</button>
+            </select></div>
+            <div style={{ display: 'flex', alignItems: 'flex-end' }}><button type="submit" className="btn-view" style={{ padding: '10px 18px', width: '100%' }}>Add Invoice</button></div>
           </form>
         </div>
 
@@ -136,6 +136,13 @@ export default function AdminCustomer({ session }) {
       </main>
     </div>
   )
+}
+
+const labelStyle = {
+  display: 'block',
+  fontSize: '0.78rem',
+  color: '#94A3B8',
+  marginBottom: 5
 }
 
 const inputStyle = {
