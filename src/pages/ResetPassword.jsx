@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import './Login.css'
 
-export default function ResetPassword() {
+export default function ResetPassword({ onDone }) {
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
@@ -26,6 +26,7 @@ export default function ResetPassword() {
       setError(error.message)
       setLoading(false)
     } else {
+      onDone()
       navigate('/dashboard')
     }
   }

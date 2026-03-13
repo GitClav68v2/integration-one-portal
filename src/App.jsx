@@ -13,13 +13,20 @@ const ADMIN_EMAILS = ['dcclav@gmail.com']
 
 export default function App() {
   const [session, setSession] = useState(undefined)
+  const [recoveryMode, setRecoveryMode] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setSession(session)
-      if (event === 'PASSWORD_RECOVERY') navigate('/reset-password')
+      if (event === 'PASSWORD_RECOVERY') {
+        setRecoveryMode(true)
+        setSession(session)
+        navigate('/reset-password')
+      } else {
+        setRecoveryMode(false)
+        setSession(session)
+      }
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -36,7 +43,7 @@ export default function App() {
       <Route path="/admin" element={session && isAdmin ? <AdminDashboard session={session} /> : <Navigate to={session ? '/dashboard' : '/login'} />} />
       <Route path="/admin/customers/new" element={session && isAdmin ? <AdminNewCustomer session={session} /> : <Navigate to="/login" />} />
       <Route path="/admin/customers/:id" element={session && isAdmin ? <AdminCustomer session={session} /> : <Navigate to="/login" />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/reset-password" element={recoveryMode ? <ResetPassword onDone={() => setRecoveryMode(false)} /> : <Navigate to={session ? (isAdmin ? '/admin' : '/dashboard') : '/login'} />} />
       <Route path="*" element={<Navigate to={session ? (isAdmin ? '/admin' : '/dashboard') : '/login'} />} />
     </Routes>
   )
