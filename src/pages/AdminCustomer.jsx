@@ -90,8 +90,8 @@ export default function AdminCustomer({ session }) {
             <div><label style={labelStyle}>Invoice #</label><input value={newInvoice.invoice_number} onChange={e => setNewInvoice({ ...newInvoice, invoice_number: e.target.value })} required style={inputStyle} /></div>
             <div><label style={labelStyle}>Invoice Date</label><input type="date" value={newInvoice.invoice_date} onChange={e => setNewInvoice({ ...newInvoice, invoice_date: e.target.value })} required style={inputStyle} /></div>
             <div><label style={labelStyle}>Due Date</label><input type="date" value={newInvoice.due_date} onChange={e => setNewInvoice({ ...newInvoice, due_date: e.target.value })} required style={inputStyle} /></div>
-            <div><label style={labelStyle}>Total $</label><input value={newInvoice.amount_total} onChange={e => setNewInvoice({ ...newInvoice, amount_total: formatCurrency(e.target.value) })} required style={inputStyle} placeholder="0.00" /></div>
-            <div><label style={labelStyle}>Paid $</label><input value={newInvoice.amount_paid} onChange={e => setNewInvoice({ ...newInvoice, amount_paid: formatCurrency(e.target.value) })} style={inputStyle} placeholder="0.00" /></div>
+            <div><label style={labelStyle}>Total $</label><input value={newInvoice.amount_total} onChange={e => setNewInvoice({ ...newInvoice, amount_total: formatCurrency(e.target.value) })} onBlur={e => setNewInvoice(v => ({ ...v, amount_total: finalizeCurrency(e.target.value) }))} required style={inputStyle} placeholder="0.00" /></div>
+            <div><label style={labelStyle}>Paid $</label><input value={newInvoice.amount_paid} onChange={e => setNewInvoice({ ...newInvoice, amount_paid: formatCurrency(e.target.value) })} onBlur={e => setNewInvoice(v => ({ ...v, amount_paid: finalizeCurrency(e.target.value) }))} style={inputStyle} placeholder="0.00" /></div>
             <div><label style={labelStyle}>Status</label><select value={newInvoice.status} onChange={e => setNewInvoice({ ...newInvoice, status: e.target.value })} style={inputStyle}>
               <option value="unpaid">Unpaid</option>
               <option value="partial">Partial</option>
@@ -153,7 +153,14 @@ function formatCurrency(value) {
   const digits = value.replace(/[^\d.]/g, '')
   const parts = digits.split('.')
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  if (parts.length > 1) parts[1] = parts[1].slice(0, 2)
   return parts.length > 2 ? parts[0] + '.' + parts[1] : parts.join('.')
+}
+
+function finalizeCurrency(value) {
+  const num = parseFloat(value.replace(/,/g, ''))
+  if (isNaN(num)) return ''
+  return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
 const labelStyle = {
