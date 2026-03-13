@@ -80,7 +80,13 @@ export default function AdminNewCustomer() {
           <div>
             <label style={labelStyle}>Phone</label>
             <input style={inputStyle} type="tel" value={form.phone}
-              onChange={e => setForm({ ...form, phone: e.target.value })} />
+              onChange={e => {
+                const digits = e.target.value.replace(/\D/g, '').slice(0, 10)
+                let formatted = digits
+                if (digits.length > 6) formatted = digits.slice(0,3) + '-' + digits.slice(3,6) + '-' + digits.slice(6)
+                else if (digits.length > 3) formatted = digits.slice(0,3) + '-' + digits.slice(3)
+                setForm({ ...form, phone: formatted })
+              }} />
           </div>
 
           {error && <p style={{ color: '#EF4444', margin: 0, fontSize: '0.88rem' }}>{error}</p>}
