@@ -88,7 +88,7 @@ export default function AdminCustomer({ session }) {
           <h2 style={{ margin: '0 0 16px', fontSize: '1rem' }}>Add Invoice</h2>
           <form onSubmit={handleAddInvoice}
             onKeyDown={e => {
-              if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') {
+              if ((e.key === 'Enter' || (e.key === 'Tab' && !e.shiftKey)) && e.target.tagName !== 'BUTTON') {
                 e.preventDefault()
                 const fields = Array.from(e.currentTarget.querySelectorAll('input, select, button'))
                 const idx = fields.indexOf(e.target)
