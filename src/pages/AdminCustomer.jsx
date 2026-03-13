@@ -35,8 +35,8 @@ export default function AdminCustomer({ session }) {
     const { data, error } = await supabase.from('invoices').insert([{
       ...newInvoice,
       customer_id: id,
-      amount_total: parseFloat(newInvoice.amount_total),
-      amount_paid: parseFloat(newInvoice.amount_paid)
+      amount_total: parseFloat(newInvoice.amount_total.replace(/,/g, '')),
+      amount_paid: parseFloat(newInvoice.amount_paid.replace(/,/g, ''))
     }]).select().single()
     if (!error && data) {
       setInvoices([data, ...invoices])
@@ -79,8 +79,8 @@ export default function AdminCustomer({ session }) {
             <div><label style={labelStyle}>Invoice #</label><input value={newInvoice.invoice_number} onChange={e => setNewInvoice({ ...newInvoice, invoice_number: e.target.value })} required style={inputStyle} /></div>
             <div><label style={labelStyle}>Invoice Date</label><input type="date" value={newInvoice.invoice_date} onChange={e => setNewInvoice({ ...newInvoice, invoice_date: e.target.value })} required style={inputStyle} /></div>
             <div><label style={labelStyle}>Due Date</label><input type="date" value={newInvoice.due_date} onChange={e => setNewInvoice({ ...newInvoice, due_date: e.target.value })} required style={inputStyle} /></div>
-            <div><label style={labelStyle}>Total $</label><input type="number" step="0.01" value={newInvoice.amount_total} onChange={e => setNewInvoice({ ...newInvoice, amount_total: e.target.value })} required style={inputStyle} /></div>
-            <div><label style={labelStyle}>Paid $</label><input type="number" step="0.01" value={newInvoice.amount_paid} onChange={e => setNewInvoice({ ...newInvoice, amount_paid: e.target.value })} style={inputStyle} /></div>
+            <div><label style={labelStyle}>Total $</label><input value={newInvoice.amount_total} onChange={e => setNewInvoice({ ...newInvoice, amount_total: formatCurrency(e.target.value) })} required style={inputStyle} placeholder="0.00" /></div>
+            <div><label style={labelStyle}>Paid $</label><input value={newInvoice.amount_paid} onChange={e => setNewInvoice({ ...newInvoice, amount_paid: formatCurrency(e.target.value) })} style={inputStyle} placeholder="0.00" /></div>
             <div><label style={labelStyle}>Status</label><select value={newInvoice.status} onChange={e => setNewInvoice({ ...newInvoice, status: e.target.value })} style={inputStyle}>
               <option value="unpaid">Unpaid</option>
               <option value="partial">Partial</option>
@@ -136,6 +136,13 @@ export default function AdminCustomer({ session }) {
       </main>
     </div>
   )
+}
+
+function formatCurrency(value) {
+  const digits = value.replace(/[^\d.]/g, '')
+  const parts = digits.split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return parts.length > 2 ? parts[0] + '.' + parts[1] : parts.join('.')
 }
 
 const labelStyle = {
