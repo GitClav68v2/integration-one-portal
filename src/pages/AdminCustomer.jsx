@@ -86,7 +86,16 @@ export default function AdminCustomer({ session }) {
 
         <div id="add-invoice" style={{ background: 'var(--slate)', border: '1px solid var(--border)', borderRadius: 10, padding: 24, marginBottom: 32 }}>
           <h2 style={{ margin: '0 0 16px', fontSize: '1rem' }}>Add Invoice</h2>
-          <form onSubmit={handleAddInvoice} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
+          <form onSubmit={handleAddInvoice}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') {
+                e.preventDefault()
+                const fields = Array.from(e.currentTarget.querySelectorAll('input, select, button'))
+                const idx = fields.indexOf(e.target)
+                if (idx < fields.length - 1) fields[idx + 1].focus()
+              }
+            }}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
             <div><label style={labelStyle}>Invoice #</label><input tabIndex={1} value={newInvoice.invoice_number} onChange={e => setNewInvoice({ ...newInvoice, invoice_number: e.target.value })} required style={inputStyle} /></div>
             <div><label style={labelStyle}>Invoice Date</label><input tabIndex={2} type="date" value={newInvoice.invoice_date} onChange={e => setNewInvoice({ ...newInvoice, invoice_date: e.target.value })} required style={inputStyle} /></div>
             <div><label style={labelStyle}>Due Date</label><input tabIndex={3} type="date" value={newInvoice.due_date} onChange={e => setNewInvoice({ ...newInvoice, due_date: e.target.value })} required style={inputStyle} /></div>
