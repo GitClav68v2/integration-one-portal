@@ -87,17 +87,17 @@ export default function AdminCustomer({ session }) {
         <div id="add-invoice" style={{ background: 'var(--slate)', border: '1px solid var(--border)', borderRadius: 10, padding: 24, marginBottom: 32 }}>
           <h2 style={{ margin: '0 0 16px', fontSize: '1rem' }}>Add Invoice</h2>
           <form onSubmit={handleAddInvoice} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
-            <div><label style={labelStyle}>Invoice #</label><input value={newInvoice.invoice_number} onChange={e => setNewInvoice({ ...newInvoice, invoice_number: e.target.value })} required style={inputStyle} /></div>
-            <div><label style={labelStyle}>Invoice Date</label><input type="date" value={newInvoice.invoice_date} onChange={e => setNewInvoice({ ...newInvoice, invoice_date: e.target.value })} required style={inputStyle} /></div>
-            <div><label style={labelStyle}>Due Date</label><input type="date" value={newInvoice.due_date} onChange={e => setNewInvoice({ ...newInvoice, due_date: e.target.value })} required style={inputStyle} /></div>
-            <div><label style={labelStyle}>Total $</label><input value={newInvoice.amount_total} onChange={e => setNewInvoice({ ...newInvoice, amount_total: formatCurrency(e.target.value) })} onBlur={e => { const val = e.target.value; setNewInvoice(v => ({ ...v, amount_total: finalizeCurrency(val) })) }} required style={inputStyle} placeholder="0.00" /></div>
-            <div><label style={labelStyle}>Paid $</label><input value={newInvoice.amount_paid} onChange={e => setNewInvoice({ ...newInvoice, amount_paid: formatCurrency(e.target.value) })} onBlur={e => { const val = e.target.value; setNewInvoice(v => ({ ...v, amount_paid: finalizeCurrency(val) })) }} style={inputStyle} placeholder="0.00" /></div>
-            <div><label style={labelStyle}>Status</label><select value={newInvoice.status} onChange={e => setNewInvoice({ ...newInvoice, status: e.target.value })} style={inputStyle}>
+            <div><label style={labelStyle}>Invoice #</label><input tabIndex={1} value={newInvoice.invoice_number} onChange={e => setNewInvoice({ ...newInvoice, invoice_number: e.target.value })} required style={inputStyle} /></div>
+            <div><label style={labelStyle}>Invoice Date</label><input tabIndex={2} type="date" value={newInvoice.invoice_date} onChange={e => setNewInvoice({ ...newInvoice, invoice_date: e.target.value })} required style={inputStyle} /></div>
+            <div><label style={labelStyle}>Due Date</label><input tabIndex={3} type="date" value={newInvoice.due_date} onChange={e => setNewInvoice({ ...newInvoice, due_date: e.target.value })} required style={inputStyle} /></div>
+            <div><label style={labelStyle}>Total $</label><input tabIndex={4} value={newInvoice.amount_total} onChange={e => setNewInvoice({ ...newInvoice, amount_total: formatCurrency(e.target.value) })} onBlur={e => { const val = e.target.value; setNewInvoice(v => ({ ...v, amount_total: finalizeCurrency(val) })) }} required style={inputStyle} placeholder="0.00" /></div>
+            <div><label style={labelStyle}>Paid $</label><input tabIndex={5} value={newInvoice.amount_paid} onChange={e => setNewInvoice({ ...newInvoice, amount_paid: formatCurrency(e.target.value) })} onBlur={e => { const val = e.target.value; setNewInvoice(v => ({ ...v, amount_paid: finalizeCurrency(val) })) }} style={inputStyle} placeholder="0.00" /></div>
+            <div><label style={labelStyle}>Status</label><select tabIndex={6} value={newInvoice.status} onChange={e => setNewInvoice({ ...newInvoice, status: e.target.value })} style={inputStyle}>
               <option value="unpaid">Unpaid</option>
               <option value="partial">Partial</option>
               <option value="paid">Paid</option>
             </select></div>
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}><button type="submit" className="btn-view" style={{ padding: '10px 18px', width: '100%' }}>Add Invoice</button></div>
+            <div style={{ display: 'flex', alignItems: 'flex-end' }}><button tabIndex={7} type="submit" className="btn-view" style={{ padding: '10px 18px', width: '100%' }}>Add Invoice</button></div>
           </form>
         </div>
 
