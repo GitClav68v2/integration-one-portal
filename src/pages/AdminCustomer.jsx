@@ -41,6 +41,17 @@ export default function AdminCustomer({ session }) {
     if (!error && data) {
       setInvoices([data, ...invoices])
       setNewInvoice({ invoice_number: '', invoice_date: '', due_date: '', amount_total: '', amount_paid: '0', status: 'unpaid' })
+      // Send email notification
+      supabase.functions.invoke('notify-invoice', {
+        body: {
+          customerEmail: customer.email,
+          customerName: customer.business_name,
+          invoiceNumber: data.invoice_number,
+          invoiceDate: new Date(data.invoice_date).toLocaleDateString(),
+          dueDate: new Date(data.due_date).toLocaleDateString(),
+          amountTotal: parseFloat(data.amount_total).toLocaleString('en-US', { minimumFractionDigits: 2 }),
+        }
+      })
     }
   }
 
