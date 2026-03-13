@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { supabase } from './lib/supabase'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -7,16 +7,19 @@ import Invoice from './pages/Invoice'
 import AdminDashboard from './pages/AdminDashboard'
 import AdminCustomer from './pages/AdminCustomer'
 import AdminNewCustomer from './pages/AdminNewCustomer'
+import ResetPassword from './pages/ResetPassword'
 
 const ADMIN_EMAILS = ['dcclav@gmail.com']
 
 export default function App() {
   const [session, setSession] = useState(undefined)
+  const navigate = useNavigate()
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session)
+      if (event === 'PASSWORD_RECOVERY') navigate('/reset-password')
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -33,6 +36,7 @@ export default function App() {
       <Route path="/admin" element={session && isAdmin ? <AdminDashboard session={session} /> : <Navigate to={session ? '/dashboard' : '/login'} />} />
       <Route path="/admin/customers/new" element={session && isAdmin ? <AdminNewCustomer session={session} /> : <Navigate to="/login" />} />
       <Route path="/admin/customers/:id" element={session && isAdmin ? <AdminCustomer session={session} /> : <Navigate to="/login" />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="*" element={<Navigate to={session ? (isAdmin ? '/admin' : '/dashboard') : '/login'} />} />
     </Routes>
   )
