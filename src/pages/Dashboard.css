@@ -129,3 +129,8 @@ body { background: var(--navy); color: var(--text); margin: 0; font-family: Inte
 }
 
 .btn-view:hover { background: var(--cyan); color: var(--navy); }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.6) sepia(1) saturate(3) hue-rotate(160deg);
+  cursor: pointer;
+}

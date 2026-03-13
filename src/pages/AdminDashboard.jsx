@@ -64,9 +64,12 @@ export default function AdminDashboard({ session }) {
                   <td>{c.contact_name}</td>
                   <td>{c.email}</td>
                   <td>{c.invoices?.[0]?.count ?? 0}</td>
-                  <td>
+                  <td style={{ display: 'flex', gap: 8 }}>
                     <button className="btn-view" onClick={() => navigate(`/admin/customers/${c.id}`)}>
                       Manage
+                    </button>
+                    <button className="btn-view" onClick={() => navigate(`/admin/customers/${c.id}#add-invoice`)}>
+                      + Invoice
                     </button>
                   </td>
                 </tr>

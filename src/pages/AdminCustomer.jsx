@@ -84,7 +84,7 @@ export default function AdminCustomer({ session }) {
           </p>
         </div>
 
-        <div style={{ background: 'var(--slate)', border: '1px solid var(--border)', borderRadius: 10, padding: 24, marginBottom: 32 }}>
+        <div id="add-invoice" style={{ background: 'var(--slate)', border: '1px solid var(--border)', borderRadius: 10, padding: 24, marginBottom: 32 }}>
           <h2 style={{ margin: '0 0 16px', fontSize: '1rem' }}>Add Invoice</h2>
           <form onSubmit={handleAddInvoice} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
             <div><label style={labelStyle}>Invoice #</label><input value={newInvoice.invoice_number} onChange={e => setNewInvoice({ ...newInvoice, invoice_number: e.target.value })} required style={inputStyle} /></div>
