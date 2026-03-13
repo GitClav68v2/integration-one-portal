@@ -88,11 +88,14 @@ export default function AdminCustomer({ session }) {
           <h2 style={{ margin: '0 0 16px', fontSize: '1rem' }}>Add Invoice</h2>
           <form onSubmit={handleAddInvoice}
             onKeyDown={e => {
-              if ((e.key === 'Enter' || (e.key === 'Tab' && !e.shiftKey)) && e.target.tagName !== 'BUTTON') {
+              const isDate = e.target.type === 'date'
+              const isEnter = e.key === 'Enter'
+              const isTab = e.key === 'Tab' && !e.shiftKey
+              if ((isEnter || (isTab && !isDate)) && e.target.tagName !== 'BUTTON') {
                 e.preventDefault()
                 const fields = Array.from(e.currentTarget.querySelectorAll('input, select, button'))
                 const idx = fields.indexOf(e.target)
-                if (idx < fields.length - 1) fields[idx + 1].focus()
+                if (idx < fields.length - 1) requestAnimationFrame(() => fields[idx + 1].focus())
               }
             }}
             style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
