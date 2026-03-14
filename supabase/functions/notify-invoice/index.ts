@@ -9,7 +9,7 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
-    const { customerEmail, customerName, invoiceNumber, invoiceDate, dueDate, amountTotal } = await req.json()
+    const { customerEmail, customerName, invoiceId, invoiceNumber, invoiceDate, dueDate, amountTotal } = await req.json()
 
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -49,7 +49,7 @@ serve(async (req) => {
                   <td style="padding: 10px 0; font-weight: 700; font-size: 1.1rem; text-align: right;">$${amountTotal}</td>
                 </tr>
               </table>
-              <a href="https://portal.integrationone.net" style="display: inline-block; background: #06B6D4; color: #0B1120; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">View Invoice</a>
+              <a href="https://portal.integrationone.net/invoice/${invoiceId}" style="display: inline-block; background: #06B6D4; color: #0B1120; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">View Invoice</a>
               <p style="margin: 24px 0 0; color: #9ca3af; font-size: 0.85rem;">Questions? Email us at <a href="mailto:info@integrationone.net" style="color: #06B6D4;">info@integrationone.net</a></p>
             </div>
           </div>

@@ -46,6 +46,7 @@ export default function AdminCustomer({ session }) {
         body: {
           customerEmail: customer.email,
           customerName: customer.business_name,
+          invoiceId: data.id,
           invoiceNumber: data.invoice_number,
           invoiceDate: new Date(data.invoice_date).toLocaleDateString(),
           dueDate: new Date(data.due_date).toLocaleDateString(),
