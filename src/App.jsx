@@ -39,7 +39,7 @@ export default function App() {
     <Routes>
       <Route path="/login" element={!session ? <Login /> : <Navigate to={isAdmin ? '/admin' : '/dashboard'} />} />
       <Route path="/dashboard" element={session && !isAdmin ? <Dashboard session={session} /> : <Navigate to={session ? '/admin' : '/login'} />} />
-      <Route path="/invoice/:id" element={session ? <Invoice session={session} /> : <Navigate to="/login" />} />
+      <Route path="/invoice/:id" element={session ? <Invoice session={session} /> : <Navigate to="/login" state={{ from: window.location.pathname }} />} />
       <Route path="/admin" element={session && isAdmin ? <AdminDashboard session={session} /> : <Navigate to={session ? '/dashboard' : '/login'} />} />
       <Route path="/admin/customers/new" element={session && isAdmin ? <AdminNewCustomer session={session} /> : <Navigate to="/login" />} />
       <Route path="/admin/customers/:id" element={session && isAdmin ? <AdminCustomer session={session} /> : <Navigate to="/login" />} />
