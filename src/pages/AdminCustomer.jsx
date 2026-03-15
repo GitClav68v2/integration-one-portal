@@ -73,7 +73,7 @@ export default function AdminCustomer({ session }) {
   return (
     <div className="dashboard-page">
       <header className="dashboard-header">
-        <div className="dashboard-brand">Integration One <span>Admin</span></div>
+        <a href="https://integrationone.net" className="dashboard-brand" style={{ textDecoration: 'none' }}>Integration One <span>Admin</span></a>
         <button className="btn-signout" onClick={() => navigate('/admin')}>← Customers</button>
       </header>
 

@@ -74,7 +74,7 @@ export default function Invoice({ session }) {
   return (
     <div className="dashboard-page">
       <header className="dashboard-header">
-        <div className="dashboard-brand">Integration One <span>Client Portal</span></div>
+        <a href="https://integrationone.net" className="dashboard-brand" style={{ textDecoration: 'none' }}>Integration One <span>Client Portal</span></a>
         <button className="btn-signout" onClick={() => navigate('/dashboard')}>← Back</button>
       </header>
 

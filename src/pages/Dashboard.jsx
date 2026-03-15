@@ -55,7 +55,7 @@ export default function Dashboard({ session }) {
   return (
     <div className="dashboard-page">
       <header className="dashboard-header">
-        <div className="dashboard-brand">Integration One <span>Client Portal</span></div>
+        <a href="https://integrationone.net" className="dashboard-brand" style={{ textDecoration: 'none' }}>Integration One <span>Client Portal</span></a>
         <div className="dashboard-user">
           <span>{session.user.email}</span>
           <button onClick={handleSignOut} className="btn-signout">Sign Out</button>
