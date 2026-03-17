@@ -22,19 +22,7 @@ export default function Invoice({ session }) {
         .single()
 
       if (inv) {
-        // If returning from Stripe success, mark as paid
-        if (justPaid && inv.status !== 'paid') {
-          const balance = inv.amount_total - inv.amount_paid
-          const { data: updated } = await supabase
-            .from('invoices')
-            .update({ amount_paid: inv.amount_total, status: 'paid' })
-            .eq('id', id)
-            .select()
-            .single()
-          setInvoice(updated || inv)
-        } else {
-          setInvoice(inv)
-        }
+        setInvoice(inv)
         if (inv.pdf_path) {
           const { data } = await supabase.storage
             .from('invoices')
@@ -49,14 +37,8 @@ export default function Invoice({ session }) {
 
   async function handlePay() {
     setPaying(true)
-    const balance = invoice.amount_total - invoice.amount_paid
     const { data, error } = await supabase.functions.invoke('create-checkout', {
-      body: {
-        invoiceId: id,
-        invoiceNumber: invoice.invoice_number,
-        amountDue: balance,
-        customerEmail: session.user.email,
-      }
+      body: { invoiceId: id },
     })
     if (data?.url) {
       window.location.href = data.url
