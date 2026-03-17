@@ -21,6 +21,10 @@ export default function App() {
         setRecoveryMode(true)
         setSession(session)
         navigate('/reset-password')
+      } else if (event === 'SIGNED_IN' && window.location.hash.includes('type=invite')) {
+        setRecoveryMode(true)
+        setSession(session)
+        navigate('/reset-password')
       } else {
         setRecoveryMode(false)
         setSession(session)
@@ -41,7 +45,7 @@ export default function App() {
       <Route path="/admin" element={session && isAdmin ? <AdminDashboard session={session} /> : <Navigate to={session ? '/dashboard' : '/login'} />} />
       <Route path="/admin/customers/new" element={session && isAdmin ? <AdminNewCustomer session={session} /> : <Navigate to="/login" />} />
       <Route path="/admin/customers/:id" element={session && isAdmin ? <AdminCustomer session={session} /> : <Navigate to="/login" />} />
-      <Route path="/reset-password" element={recoveryMode ? <ResetPassword onDone={() => setRecoveryMode(false)} /> : <Navigate to={session ? (isAdmin ? '/admin' : '/dashboard') : '/login'} />} />
+      <Route path="/reset-password" element={recoveryMode ? <ResetPassword onDone={() => setRecoveryMode(false)} isAdmin={isAdmin} /> : <Navigate to={session ? (isAdmin ? '/admin' : '/dashboard') : '/login'} />} />
       <Route path="*" element={<Navigate to={session ? (isAdmin ? '/admin' : '/dashboard') : '/login'} />} />
     </Routes>
   )

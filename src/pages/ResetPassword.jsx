@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import './Login.css'
 
-export default function ResetPassword({ onDone }) {
+export default function ResetPassword({ onDone, isAdmin }) {
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const isInvite = window.location.hash.includes('type=invite')
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -27,7 +28,7 @@ export default function ResetPassword({ onDone }) {
       setLoading(false)
     } else {
       onDone()
-      navigate('/dashboard')
+      navigate(isAdmin ? '/admin' : '/dashboard')
     }
   }
 
@@ -36,7 +37,7 @@ export default function ResetPassword({ onDone }) {
       <div className="login-card">
         <div className="login-logo">
           <div className="login-logo-text">Integration One</div>
-          <div className="login-logo-sub">Set New Password</div>
+          <div className="login-logo-sub">{isInvite ? 'Create Your Password' : 'Set New Password'}</div>
         </div>
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
