@@ -9,8 +9,6 @@ import AdminCustomer from './pages/AdminCustomer'
 import AdminNewCustomer from './pages/AdminNewCustomer'
 import ResetPassword from './pages/ResetPassword'
 
-const ADMIN_EMAILS = ['dcclav@gmail.com']
-
 export default function App() {
   const [session, setSession] = useState(undefined)
   const [recoveryMode, setRecoveryMode] = useState(false)
@@ -33,7 +31,7 @@ export default function App() {
 
   if (session === undefined) return null
 
-  const isAdmin = session && ADMIN_EMAILS.includes(session.user.email)
+  const isAdmin = session?.user?.app_metadata?.is_admin === true
 
   return (
     <Routes>
