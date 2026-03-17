@@ -43,7 +43,10 @@ export default function Invoice({ session }) {
     if (data?.url) {
       window.location.href = data.url
     } else {
-      alert('Payment error: ' + (error?.message || 'Please try again.'))
+      const msg = error?.context
+        ? await error.context.json().then(j => j.error).catch(() => error.message)
+        : (error?.message || 'Please try again.')
+      alert('Payment error: ' + msg)
       setPaying(false)
     }
   }
