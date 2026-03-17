@@ -8,6 +8,7 @@ import AdminDashboard from './pages/AdminDashboard'
 import AdminCustomer from './pages/AdminCustomer'
 import AdminNewCustomer from './pages/AdminNewCustomer'
 import ResetPassword from './pages/ResetPassword'
+import PaymentConfirmed from './pages/PaymentConfirmed'
 
 export default function App() {
   const [session, setSession] = useState(undefined)
@@ -45,6 +46,7 @@ export default function App() {
       <Route path="/admin" element={session && isAdmin ? <AdminDashboard session={session} /> : <Navigate to={session ? '/dashboard' : '/login'} />} />
       <Route path="/admin/customers/new" element={session && isAdmin ? <AdminNewCustomer session={session} /> : <Navigate to="/login" />} />
       <Route path="/admin/customers/:id" element={session && isAdmin ? <AdminCustomer session={session} /> : <Navigate to="/login" />} />
+      <Route path="/payment-confirmed" element={session ? <PaymentConfirmed /> : <Navigate to="/login" />} />
       <Route path="/reset-password" element={recoveryMode ? <ResetPassword onDone={() => setRecoveryMode(false)} isAdmin={isAdmin} /> : <Navigate to={session ? (isAdmin ? '/admin' : '/dashboard') : '/login'} />} />
       <Route path="*" element={<Navigate to={session ? (isAdmin ? '/admin' : '/dashboard') : '/login'} />} />
     </Routes>

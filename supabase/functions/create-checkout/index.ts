@@ -1,4 +1,3 @@
-import Stripe from 'npm:stripe@13.11.0'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
@@ -10,7 +9,6 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
-    // Require Authorization header
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -24,7 +22,6 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     )
 
-    // Verify JWT and get the authenticated user
     const token = authHeader.replace('Bearer ', '')
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
     if (authError || !user) {
@@ -51,7 +48,6 @@ Deno.serve(async (req) => {
 
     await supabase.from('payment_attempts').insert({ user_id: user.id })
 
-    // Only accept invoiceId from client — never trust amount
     const { invoiceId } = await req.json()
     if (!invoiceId) {
       return new Response(JSON.stringify({ error: 'Missing invoiceId' }), {
@@ -60,7 +56,6 @@ Deno.serve(async (req) => {
       })
     }
 
-    // Fetch invoice with customer email for ownership check
     const { data: invoice, error: invError } = await supabase
       .from('invoices')
       .select('*, customers!inner(email)')
@@ -74,7 +69,6 @@ Deno.serve(async (req) => {
       })
     }
 
-    // Verify the invoice belongs to the authenticated user
     if (invoice.customers.email !== user.email) {
       return new Response(JSON.stringify({ error: 'Forbidden' }), {
         status: 403,
@@ -82,7 +76,6 @@ Deno.serve(async (req) => {
       })
     }
 
-    // Calculate balance server-side
     const balance = invoice.amount_total - invoice.amount_paid
     if (balance <= 0) {
       return new Response(JSON.stringify({ error: 'Invoice already paid' }), {
@@ -91,29 +84,38 @@ Deno.serve(async (req) => {
       })
     }
 
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-      apiVersion: '2023-10-16',
+    // Create Stripe Checkout Session via REST API — no SDK needed
+    const params = new URLSearchParams({
+      'payment_method_types[]': 'card',
+      'customer_email': user.email,
+      'line_items[0][price_data][currency]': 'usd',
+      'line_items[0][price_data][product_data][name]': `Invoice ${invoice.invoice_number}`,
+      'line_items[0][price_data][product_data][description]': 'Integration One — Professional Perimeter Security',
+      'line_items[0][price_data][unit_amount]': String(Math.round(balance * 100)),
+      'line_items[0][quantity]': '1',
+      'mode': 'payment',
+      'success_url': `https://portal.integrationone.net/payment-confirmed?invoiceId=${invoiceId}`,
+      'cancel_url': `https://portal.integrationone.net/invoice/${invoiceId}`,
+      'metadata[invoiceId]': invoiceId,
     })
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      customer_email: user.email,
-      line_items: [{
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: `Invoice ${invoice.invoice_number}`,
-            description: 'Integration One — Professional Perimeter Security',
-          },
-          unit_amount: Math.round(balance * 100),
-        },
-        quantity: 1,
-      }],
-      mode: 'payment',
-      success_url: `https://portal.integrationone.net/invoice/${invoiceId}?paid=true`,
-      cancel_url: `https://portal.integrationone.net/invoice/${invoiceId}`,
-      metadata: { invoiceId },
+    const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${Deno.env.get('STRIPE_SECRET_KEY')}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
     })
+
+    const session = await stripeRes.json()
+
+    if (!stripeRes.ok) {
+      return new Response(JSON.stringify({ error: session.error?.message || 'Stripe error' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
