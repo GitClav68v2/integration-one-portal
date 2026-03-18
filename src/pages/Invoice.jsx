@@ -9,6 +9,7 @@ export default function Invoice({ session }) {
   const navigate = useNavigate()
   const [invoice, setInvoice] = useState(null)
   const [pdfUrl, setPdfUrl] = useState(null)
+  const [receiptUrl, setReceiptUrl] = useState(null)
   const [loading, setLoading] = useState(true)
   const [paying, setPaying] = useState(false)
   const justPaid = searchParams.get('paid') === 'true'
@@ -28,6 +29,12 @@ export default function Invoice({ session }) {
             .from('invoices')
             .createSignedUrl(inv.pdf_path, 3600)
           if (data) setPdfUrl(data.signedUrl)
+        }
+        if (inv.receipt_pdf_path) {
+          const { data } = await supabase.storage
+            .from('invoices')
+            .createSignedUrl(inv.receipt_pdf_path, 3600)
+          if (data) setReceiptUrl(data.signedUrl)
         }
       }
       setLoading(false)
@@ -88,11 +95,18 @@ export default function Invoice({ session }) {
           </div>
         </div>
 
-        {pdfUrl && (
-          <div style={{ marginBottom: 24 }}>
-            <a href={pdfUrl} target="_blank" rel="noreferrer" className="btn-view" style={{ textDecoration: 'none', display: 'inline-block', padding: '10px 20px' }}>
-              Download PDF
-            </a>
+        {(pdfUrl || receiptUrl) && (
+          <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
+            {pdfUrl && (
+              <a href={pdfUrl} target="_blank" rel="noreferrer" className="btn-view" style={{ textDecoration: 'none', display: 'inline-block', padding: '10px 20px' }}>
+                Download Invoice
+              </a>
+            )}
+            {receiptUrl && (
+              <a href={receiptUrl} target="_blank" rel="noreferrer" className="btn-view" style={{ textDecoration: 'none', display: 'inline-block', padding: '10px 20px' }}>
+                Download Receipt
+              </a>
+            )}
           </div>
         )}
 
