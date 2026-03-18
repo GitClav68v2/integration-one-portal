@@ -17,19 +17,26 @@ Deno.serve(async (req) => {
       })
     }
 
-    const supabase = createClient(
+    // Verify JWT using anon key client — service role key cannot validate user tokens
+    const supabaseAuth = createClient(
       Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } },
     )
-
-    const token = authHeader.replace('Bearer ', '')
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser()
     if (authError || !user) {
+      console.error('Auth error:', authError?.message)
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
+
+    // Service role client for privileged DB operations
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    )
 
     // Rate limit: max 5 payment attempts per 60 seconds per user
     const oneMinuteAgo = new Date(Date.now() - 60000).toISOString()
@@ -63,11 +70,14 @@ Deno.serve(async (req) => {
       .single()
 
     if (invError || !invoice) {
+      console.error('Invoice fetch failed:', invError, 'invoiceId:', invoiceId, 'user:', user.email)
       return new Response(JSON.stringify({ error: 'Invoice not found' }), {
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
+
+    console.log('Invoice customer email:', invoice.customers?.email, 'User email:', user.email)
 
     if (invoice.customers.email !== user.email) {
       return new Response(JSON.stringify({ error: 'Forbidden' }), {
