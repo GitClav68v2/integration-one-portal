@@ -4,11 +4,6 @@ import { supabase } from './lib/supabase'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Invoice from './pages/Invoice'
-import AdminDashboard from './pages/AdminDashboard'
-import AdminCustomer from './pages/AdminCustomer'
-import AdminNewCustomer from './pages/AdminNewCustomer'
-import AdminNewSupplier from './pages/AdminNewSupplier'
-import AdminSupplier from './pages/AdminSupplier'
 import ResetPassword from './pages/ResetPassword'
 import PaymentConfirmed from './pages/PaymentConfirmed'
 
@@ -38,22 +33,14 @@ export default function App() {
 
   if (session === undefined) return null
 
-  const isAdmin = session?.user?.app_metadata?.is_admin === true
-
   return (
     <Routes>
-      <Route path="/login" element={!session ? <Login /> : <Navigate to={isAdmin ? '/admin' : '/dashboard'} />} />
-      <Route path="/dashboard" element={session && !isAdmin ? <Dashboard session={session} /> : <Navigate to={session ? '/admin' : '/login'} />} />
+      <Route path="/login" element={!session ? <Login /> : <Navigate to="/dashboard" />} />
+      <Route path="/dashboard" element={session ? <Dashboard session={session} /> : <Navigate to="/login" />} />
       <Route path="/invoice/:id" element={session ? <Invoice session={session} /> : <Navigate to="/login" state={{ from: window.location.pathname }} />} />
-      <Route path="/admin" element={session && isAdmin ? <AdminDashboard session={session} /> : <Navigate to={session ? '/dashboard' : '/login'} />} />
-      <Route path="/admin/customers/new" element={session && isAdmin ? <AdminNewCustomer session={session} /> : <Navigate to="/login" />} />
-      <Route path="/admin/customers/:id" element={session && isAdmin ? <AdminCustomer session={session} /> : <Navigate to="/login" />} />
-      <Route path="/admin/suppliers" element={session && isAdmin ? <AdminDashboard session={session} /> : <Navigate to="/login" />} />
-      <Route path="/admin/suppliers/new" element={session && isAdmin ? <AdminNewSupplier session={session} /> : <Navigate to="/login" />} />
-      <Route path="/admin/suppliers/:id" element={session && isAdmin ? <AdminSupplier session={session} /> : <Navigate to="/login" />} />
       <Route path="/payment-confirmed" element={session ? <PaymentConfirmed /> : <Navigate to="/login" />} />
-      <Route path="/reset-password" element={recoveryMode ? <ResetPassword onDone={() => setRecoveryMode(false)} isAdmin={isAdmin} /> : <Navigate to={session ? (isAdmin ? '/admin' : '/dashboard') : '/login'} />} />
-      <Route path="*" element={<Navigate to={session ? (isAdmin ? '/admin' : '/dashboard') : '/login'} />} />
+      <Route path="/reset-password" element={recoveryMode ? <ResetPassword onDone={() => setRecoveryMode(false)} isAdmin={false} /> : <Navigate to={session ? '/dashboard' : '/login'} />} />
+      <Route path="*" element={<Navigate to={session ? '/dashboard' : '/login'} />} />
     </Routes>
   )
 }
