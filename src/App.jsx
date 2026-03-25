@@ -7,6 +7,8 @@ import Invoice from './pages/Invoice'
 import AdminDashboard from './pages/AdminDashboard'
 import AdminCustomer from './pages/AdminCustomer'
 import AdminNewCustomer from './pages/AdminNewCustomer'
+import AdminNewSupplier from './pages/AdminNewSupplier'
+import AdminSupplier from './pages/AdminSupplier'
 import ResetPassword from './pages/ResetPassword'
 import PaymentConfirmed from './pages/PaymentConfirmed'
 
@@ -46,6 +48,9 @@ export default function App() {
       <Route path="/admin" element={session && isAdmin ? <AdminDashboard session={session} /> : <Navigate to={session ? '/dashboard' : '/login'} />} />
       <Route path="/admin/customers/new" element={session && isAdmin ? <AdminNewCustomer session={session} /> : <Navigate to="/login" />} />
       <Route path="/admin/customers/:id" element={session && isAdmin ? <AdminCustomer session={session} /> : <Navigate to="/login" />} />
+      <Route path="/admin/suppliers" element={session && isAdmin ? <AdminDashboard session={session} /> : <Navigate to="/login" />} />
+      <Route path="/admin/suppliers/new" element={session && isAdmin ? <AdminNewSupplier session={session} /> : <Navigate to="/login" />} />
+      <Route path="/admin/suppliers/:id" element={session && isAdmin ? <AdminSupplier session={session} /> : <Navigate to="/login" />} />
       <Route path="/payment-confirmed" element={session ? <PaymentConfirmed /> : <Navigate to="/login" />} />
       <Route path="/reset-password" element={recoveryMode ? <ResetPassword onDone={() => setRecoveryMode(false)} isAdmin={isAdmin} /> : <Navigate to={session ? (isAdmin ? '/admin' : '/dashboard') : '/login'} />} />
       <Route path="*" element={<Navigate to={session ? (isAdmin ? '/admin' : '/dashboard') : '/login'} />} />
