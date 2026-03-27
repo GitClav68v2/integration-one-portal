@@ -18,11 +18,15 @@ export default function Invoice({ session }) {
     async function load() {
       const { data: inv } = await supabase
         .from('invoices')
-        .select('*')
+        .select('*, customers!inner(email)')
         .eq('id', id)
         .single()
 
       if (inv) {
+        if (inv.customers.email !== session.user.email) {
+          navigate('/')
+          return
+        }
         setInvoice(inv)
         if (inv.pdf_path) {
           const { data } = await supabase.storage

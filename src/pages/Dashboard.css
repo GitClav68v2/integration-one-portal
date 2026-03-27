@@ -134,3 +134,33 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0.6) sepia(1) saturate(3) hue-rotate(160deg);
   cursor: pointer;
 }
+
+@media (max-width: 640px) {
+  .dashboard-header {
+    padding: 12px 16px;
+  }
+
+  .dashboard-user span:first-child {
+    display: none;
+  }
+
+  .dashboard-main {
+    padding: 24px 16px;
+  }
+
+  .invoices-table {
+    min-width: 520px;
+    font-size: 0.82rem;
+  }
+
+  .invoices-table th,
+  .invoices-table td {
+    padding: 10px 10px;
+  }
+
+  .customer-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}

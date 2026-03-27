@@ -19,7 +19,7 @@ export default function App() {
         setRecoveryMode(true)
         setSession(session)
         navigate('/reset-password')
-      } else if (event === 'SIGNED_IN' && window.location.hash.includes('type=invite')) {
+      } else if (event === 'SIGNED_IN' && new URLSearchParams(window.location.hash.slice(1)).get('type') === 'invite') {
         setRecoveryMode(true)
         setSession(session)
         navigate('/reset-password')

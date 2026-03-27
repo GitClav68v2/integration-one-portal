@@ -9,7 +9,7 @@ export default function ResetPassword({ onDone, isAdmin }) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-  const isInvite = window.location.hash.includes('type=invite')
+  const isInvite = new URLSearchParams(window.location.hash.slice(1)).get('type') === 'invite'
 
   async function handleSubmit(e) {
     e.preventDefault()
